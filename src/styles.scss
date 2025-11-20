@@ -1,0 +1,384 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Importar el tema predefinido
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  html, body {
+    @apply h-full;
+  }
+
+  /* Prevenir selección de texto en elementos interactivos */
+  button,
+  a,
+  [role="button"],
+  .cursor-pointer,
+  [class*="cursor-pointer"],
+  select,
+  .card,
+  app-card,
+  [class*="card"],
+  label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Permitir selección solo en campos de texto cuando están enfocados */
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="number"]:focus,
+  input[type="date"]:focus,
+  input[type="time"]:focus,
+  input[type="search"]:focus,
+  textarea:focus,
+  [contenteditable="true"]:focus {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
+  /* Prevenir cursor de texto en inputs cuando NO están enfocados */
+  input[type="text"]:not(:focus):not(:active),
+  input[type="email"]:not(:focus):not(:active),
+  input[type="password"]:not(:focus):not(:active),
+  input[type="number"]:not(:focus):not(:active),
+  input[type="date"]:not(:focus):not(:active),
+  input[type="time"]:not(:focus):not(:active),
+  input[type="search"]:not(:focus):not(:active),
+  textarea:not(:focus):not(:active) {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    caret-color: transparent !important;
+    cursor: default;
+  }
+
+  /* Permitir cursor de texto solo cuando el input está enfocado y activo */
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="number"]:focus,
+  input[type="date"]:focus,
+  input[type="time"]:focus,
+  input[type="search"]:focus,
+  textarea:focus {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    caret-color: auto;
+    cursor: text;
+  }
+
+  /* Prevenir que los inputs muestren cursor de texto al hacer clic */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  input[type="search"],
+  textarea {
+    caret-color: transparent;
+    cursor: default;
+    pointer-events: auto;
+  }
+
+  /* Solo mostrar cursor de texto cuando el input está realmente enfocado */
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="number"]:focus,
+  input[type="date"]:focus,
+  input[type="time"]:focus,
+  input[type="search"]:focus,
+  textarea:focus {
+    caret-color: auto;
+    cursor: text;
+  }
+
+  /* Prevenir selección de texto al hacer clic en inputs no enfocados */
+  input[type="text"]::selection,
+  input[type="email"]::selection,
+  input[type="password"]::selection,
+  input[type="number"]::selection,
+  input[type="date"]::selection,
+  input[type="time"]::selection,
+  input[type="search"]::selection,
+  textarea::selection {
+    background: transparent;
+  }
+
+  input[type="text"]:focus::selection,
+  input[type="email"]:focus::selection,
+  input[type="password"]:focus::selection,
+  input[type="number"]:focus::selection,
+  input[type="date"]:focus::selection,
+  input[type="time"]:focus::selection,
+  input[type="search"]:focus::selection,
+  textarea:focus::selection {
+    background: rgba(59, 130, 246, 0.3);
+  }
+
+  /* Prevenir el cursor de texto en elementos no editables */
+  button:focus,
+  a:focus,
+  [role="button"]:focus,
+  .cursor-pointer:focus {
+    outline: none;
+  }
+
+  /* Asegurar que los botones no muestren cursor de texto */
+  button,
+  [type="button"],
+  [type="submit"],
+  [type="reset"] {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevenir selección de texto en tablas y listas (excepto contenido de celdas) */
+  table,
+  thead,
+  tbody,
+  tr {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Permitir selección en celdas de tabla para copiar contenido */
+  td,
+  th {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
+  /* Prevenir selección en elementos de navegación */
+  nav,
+  nav *,
+  aside,
+  aside * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+@layer utilities {
+  /* Mantener variables CSS para compatibilidad con componentes existentes */
+  :root {
+    --primary-color: #1976d2;
+    --secondary-color: #dc004e;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --error-color: #f44336;
+    --background-color: #f5f5f5;
+    --surface-color: #ffffff;
+    --text-primary: #212121;
+    --text-secondary: #757575;
+    --border-color: #e0e0e0;
+  }
+
+  .dark {
+    --primary-color: #64b5f6;
+    --secondary-color: #f48fb1;
+    --success-color: #81c784;
+    --warning-color: #ffb74d;
+    --error-color: #e57373;
+    --background-color: #121212;
+    --surface-color: #1e1e1e;
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0b0;
+    --border-color: #333333;
+  }
+
+  [data-theme="dark"] {
+    @apply dark;
+  }
+}
+
+.mat-mdc-snack-bar-container {
+  &.success {
+    --mdc-snackbar-container-color: var(--success-color);
+  }
+  &.error {
+    --mdc-snackbar-container-color: var(--error-color);
+  }
+  &.warning {
+    --mdc-snackbar-container-color: var(--warning-color);
+  }
+}
+/* Personalizar estilos de Material usando variables CSS */
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-container-color: none !important;
+  --mdc-outlined-text-field-outline-color: var(--text-secondary);
+  --mdc-outlined-text-field-active-indicator-color: var(--primary-color);
+  --mdc-outlined-text-field-focus-active-indicator-color: var(--primary-color);
+  --mdc-outlined-text-field-hover-active-indicator-color: var(--primary-color);
+  --mdc-outlined-text-field-label-text-color: var(--text-secondary);
+  --mdc-outlined-text-field-focus-label-text-color: var(--primary-color);
+  --mdc-outlined-text-field-hover-label-text-color: var(--text-secondary);
+  --mdc-outlined-text-field-input-text-color: var(--text-primary);
+  --mdc-outlined-text-field-input-text-placeholder-color: var(--text-secondary);
+  --mdc-outlined-text-field-container-shape: 12px;
+  margin-bottom: 0.5rem;
+}
+
+/* Dark mode overrides */
+html.dark .mat-mdc-form-field,
+html[data-theme="dark"] .mat-mdc-form-field,
+.dark .mat-mdc-form-field,
+[data-theme="dark"] .mat-mdc-form-field {
+  --mdc-outlined-text-field-container-color: none !important;
+  --mdc-outlined-text-field-outline-color: var(--text-secondary);
+  --mdc-outlined-text-field-active-indicator-color: var(--primary-color);
+  --mdc-outlined-text-field-focus-active-indicator-color: var(--primary-color);
+  --mdc-outlined-text-field-hover-active-indicator-color: var(--primary-color);
+  --mdc-outlined-text-field-label-text-color: var(--text-secondary);
+  --mdc-outlined-text-field-focus-label-text-color: var(--primary-color);
+  --mdc-outlined-text-field-hover-label-text-color: var(--text-secondary);
+  --mdc-outlined-text-field-input-text-color: var(--text-primary);
+  --mdc-outlined-text-field-input-text-placeholder-color: var(--text-secondary);
+}
+
+/* Asegurar que el fondo del wrapper use las variables */
+.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  background-color: var(--mdc-outlined-text-field-container-color);
+  border-radius: var(--mdc-outlined-text-field-container-shape, 12px);
+  padding-bottom: 0.5rem;
+}
+
+html.dark .mat-mdc-form-field .mat-mdc-text-field-wrapper,
+html[data-theme="dark"] .mat-mdc-form-field .mat-mdc-text-field-wrapper,
+.dark .mat-mdc-form-field .mat-mdc-text-field-wrapper,
+[data-theme="dark"] .mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  background-color: none !important;
+}
+
+/* Asegurar que el select también tenga texto correcto en dark mode */
+html.dark .mat-mdc-select-value,
+html[data-theme="dark"] .mat-mdc-select-value,
+.dark .mat-mdc-select-value,
+[data-theme="dark"] .mat-mdc-select-value {
+  color: var(--text-primary) !important;
+}
+
+html.dark .mat-mdc-select-trigger,
+html[data-theme="dark"] .mat-mdc-select-trigger,
+.dark .mat-mdc-select-trigger,
+[data-theme="dark"] .mat-mdc-select-trigger {
+  color: var(--text-primary) !important;
+}
+
+/* Asegurar que el input también tenga texto correcto en dark mode */
+html.dark .mat-mdc-form-field input,
+html[data-theme="dark"] .mat-mdc-form-field input,
+.dark .mat-mdc-form-field input,
+[data-theme="dark"] .mat-mdc-form-field input {
+  color: var(--text-primary) !important;
+}
+
+/* Espaciado adicional */
+.mat-mdc-form-field {
+  margin-bottom: 0.5rem;
+}
+
+/* Colores de los botones para que coincidan con la paleta */
+.mat-mdc-raised-button.mat-primary {
+  --mdc-filled-button-container-color: var(--primary-color);
+  --mdc-filled-button-label-text-color: var(--surface-color);
+}
+
+.mat-mdc-raised-button.mat-primary:hover {
+  --mdc-filled-button-container-color: var(--primary-color);
+  opacity: 0.9;
+}
+
+.mat-mdc-stroked-button.mat-primary {
+  --mdc-outlined-button-outline-color: var(--primary-color);
+  --mdc-outlined-button-label-text-color: var(--primary-color);
+}
+
+html.dark .mat-mdc-stroked-button.mat-primary,
+html[data-theme="dark"] .mat-mdc-stroked-button.mat-primary,
+.dark .mat-mdc-stroked-button.mat-primary,
+[data-theme="dark"] .mat-mdc-stroked-button.mat-primary {
+  --mdc-outlined-button-outline-color: var(--primary-color) !important;
+  --mdc-outlined-button-label-text-color: var(--primary-color) !important;
+}
+
+/* Ajustar el color del icono del datepicker */
+.mat-datepicker-toggle {
+  color: var(--primary-color);
+}
+
+html.dark .mat-datepicker-toggle,
+html[data-theme="dark"] .mat-datepicker-toggle,
+.dark .mat-datepicker-toggle,
+[data-theme="dark"] .mat-datepicker-toggle {
+  color: var(--primary-color) !important;
+}
+
+/* Asegurar que los campos tengan el padding correcto */
+.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  padding-bottom: 0.5rem;
+}
+.date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
+
+.date-input::-moz-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
+
+.date-input::-webkit-inner-spin-button,
+.date-input::-webkit-clear-button {
+  display: none;
+}
+
+.date-input:focus {
+  outline: none;
+}
+
+.date-input:hover {
+  border-color: rgb(59, 130, 246); /* Tailwind blue-500 por defecto */
+}
+
+.mdc-notched-outline__notch
+{
+  border-right: none;
+}
+
+.mdc-button__label {
+  color: var(--primary-color);
+}
+
+.mdc-stroked-button {
+  border-color: var(--primary-color);
+}
+.mat-mdc-outlined-button:not(:disabled){
+  border-color: var(--primary-color);
+}
