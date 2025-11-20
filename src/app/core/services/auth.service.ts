@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, from, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable, from, throwError, of } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
 import { User, UserRole, LoginCredentials, AuthResponse } from '../models/user.model';
 import { SupabaseService } from './supabase.service';
 
@@ -18,40 +18,76 @@ export class AuthService {
   }
 
   login(credentials: LoginCredentials): Observable<AuthResponse> {
+    const client = this.supabase.getClient();
+    
     return from(
-      this.supabase.getClient()
-        .from(this.TABLE_NAME)
-        .select('*')
-        .eq('email', credentials.email)
-        .eq('active', true)
-        .single()
+      client.auth.signInWithPassword({
+        email: credentials.email,
+        password: credentials.password
+      })
     ).pipe(
-      map(response => {
-        if (response.error) {
-          throw new Error('Credenciales inválidas');
-        }
-        
-        const user = this.mapToUser(response.data);
-        
-        // TODO: Implementar autenticación real con Supabase Auth
-        // Por ahora, la validación de contraseña debe hacerse en el backend
-        // o usando Supabase Auth. Esta es una implementación temporal.
-        if (!credentials.password || credentials.password.length < 6) {
-          throw new Error('Credenciales inválidas');
+      switchMap((authResponse) => {
+        if (authResponse.error) {
+          return throwError(() => new Error(authResponse.error.message || 'Credenciales inválidas'));
         }
 
-        const token = `supabase_jwt_token_${user.id}_${Date.now()}`;
-        const authResponse: AuthResponse = { token, user };
-        
-        this.currentUser = user;
-        this.token = token;
-        this.saveToStorage();
-        
-        return authResponse;
+        if (!authResponse.data.user) {
+          return throwError(() => new Error('No se pudo obtener la información del usuario'));
+        }
+
+        const userEmail = authResponse.data.user.email;
+        const session = authResponse.data.session;
+
+        if (!session) {
+          return throwError(() => new Error('No se pudo crear la sesión'));
+        }
+
+        if (!userEmail) {
+          return throwError(() => new Error('No se pudo obtener el email del usuario'));
+        }
+
+        // Obtener los datos del usuario de la tabla users usando el email
+        // ya que el ID de Supabase Auth puede no coincidir con el ID de la tabla
+        return from(
+          client
+            .from(this.TABLE_NAME)
+            .select('*')
+            .eq('email', userEmail)
+            .eq('active', true)
+            .single()
+        ).pipe(
+          switchMap((userResponse) => {
+            if (userResponse.error) {
+              console.error('Error al buscar usuario en tabla users:', userResponse.error);
+              client.auth.signOut().catch(error => {
+                console.error('Error al cerrar sesión:', error);
+              });
+              return throwError(() => new Error(userResponse.error.message || 'Usuario no encontrado o inactivo'));
+            }
+
+            if (!userResponse.data) {
+              client.auth.signOut().catch(error => {
+                console.error('Error al cerrar sesión:', error);
+              });
+              return throwError(() => new Error('Usuario no encontrado o inactivo'));
+            }
+
+            const user = this.mapToUser(userResponse.data);
+            const token = session.access_token;
+            const authResult: AuthResponse = { token, user };
+            
+            this.currentUser = user;
+            this.token = token;
+            this.saveToStorage();
+            
+            return of(authResult);
+          })
+        );
       }),
       catchError(error => {
         console.error('Error during login:', error);
-        return throwError(() => new Error('Credenciales inválidas'));
+        const errorMessage = error.message || 'Credenciales inválidas';
+        return throwError(() => new Error(errorMessage));
       })
     );
   }
@@ -60,6 +96,9 @@ export class AuthService {
     this.currentUser = null;
     this.token = null;
     localStorage.removeItem(this.STORAGE_KEY);
+    this.supabase.getClient().auth.signOut().catch(error => {
+      console.error('Error al cerrar sesión en Supabase:', error);
+    });
   }
 
   getCurrentUser(): User | null {
